@@ -106,7 +106,7 @@ applyFilter(struct Filter *filter, cs1300bmp *input, cs1300bmp *output)
     int size = filter -> getSize();
     int red1, red2, red3, green4, green5, green6, blue7, blue8, blue9 = 0;//this refers to the colors of the three planes intially at 0
     float divisor = filter -> getDivisor();
-    int *FilterStart; //this array will be in charge or applying the filter to the array of pixels
+    int *FilterStart;  //this array will be in charge or applying the filter to the array of pixels
     
     int i = 0;
     FilterStart = &i;//this will get the acc value of the plane and multiply filter to it
