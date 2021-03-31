@@ -1,4 +1,4 @@
-##
+ ##
 ##
 
 CXX	=g++
@@ -6,9 +6,9 @@ CXX	=g++
 ## Use our standard compiler flags for the course...
 ## You can try changing these flags to improve performance.
 ##
-CXXFLAGS= -g -O4 -fno-omit-frame-pointer -Wall
+CXXFLAGS= -g -O4 -fno-omit-frame-pointer -Wall -fopenmp
 
-goals: filter judge
+goals: judge
 	@echo "Done"
 
 filter: FilterMain.cpp Filter.cpp cs1300bmp.cc cs1300bmp.h Filter.h rdtsc.h
@@ -21,17 +21,10 @@ FILTERS = gauss.filter vline.filter hline.filter emboss.filter
 IMAGES = boats.bmp blocks-small.bmp
 TRIALS = 1 2 3 4
 
-#
-# Run the Judge script to compute a score
-#
 judge: filter
-	./Judge -p ./filter -i blocks-small.bmp
+	-./Judge -p ./filter -i boats.bmp
+	-./Judge -p ./filter -i blocks-small.bmp
 
-#
-# Run the Judge tests on both images and then compare the output to the reference output.
-#
-# Note you shouldn't use this to compute a score -- it's just for testing
-#
 test:	filter
 	./Judge -p ./filter -i boats.bmp
 	./Judge -p ./filter -i blocks-small.bmp

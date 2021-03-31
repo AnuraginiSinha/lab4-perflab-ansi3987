@@ -104,13 +104,19 @@ applyFilter(struct Filter *filter, cs1300bmp *input, cs1300bmp *output)
     output -> height = rows + 1;
     
     int size = filter -> getSize();
-    int red1, red2, red3, green4, green5, green6, blue7, blue8, blue9 = 0;//this refers to the colors of the three planes intially at 0
+    int FilterStart[9]; //caching the filter
+    //Iterate row by row
+    for (int i =0; i< size; i++){
+        for (int j = 0; j< size; j++){
+            FilterStart[(i*3)+j] = (filter -> get(i, j));
+        }
+    }
+    //this refers to the colors of the three planes intially at 0
+    int red1, red2, red3, green4, green5, green6, blue7, blue8, blue9 = 0;
     float divisor = filter -> getDivisor();
-    int *FilterStart;  //this array will be in charge or applying the filter to the array of pixels
-    
     int i = 0;
-    FilterStart = &i;//this will get the acc value of the plane and multiply filter to it
     
+    //pragma directive to compiler for optimization of for loop - research it
     #pragma omp parallel for
     for(int row = 1; row < rows; row++) {
         for(int col = 1; col < columns; col++) {
@@ -124,7 +130,7 @@ applyFilter(struct Filter *filter, cs1300bmp *input, cs1300bmp *output)
             blue8 = 0;
             blue9 = 0;
             
-            red1 += (input->color[0][row+i-1][col-1]*FilterStart[i*size]);//the first plane will be intialized row col at 0
+            red1 += input->color[0][row+i-1][col-1]*FilterStart[i*size];//the first plane will be intialized row col at 0
             red2 += (input->color[0][row+i][col-1]*FilterStart[(i+1)*size]);
             red3 += (input->color[0][row+i+1][col-1]*FilterStart[(i+2)*size]);
             green4 += (input->color[1][row+i-1][col-1]*FilterStart[i*size]);//this will start adding the values of the filter and plane at [1][0],[1][1][1][2]
@@ -171,7 +177,8 @@ applyFilter(struct Filter *filter, cs1300bmp *input, cs1300bmp *output)
             output -> color[1][row][col] = green4;
             output -> color[2][row][col] = blue7;
         }
-    }
+    } 
+    
   cycStop = rdtscll();
   double diff = cycStop - cycStart;
   double diffPerPixel = diff / (output -> width * output -> height);
